@@ -25,13 +25,13 @@ namespace EmilyPromise {
         }
 
         void reset() {
-            std::lock_guard<std::mutex> guard;
+            std::lock_guard<std::mutex> guard(mutex);
             isSet = false;
         }
         
         T wait() {
             std::unique_lock<std::mutex> lock(mutex);
-            cv.wait(lock, []{ return isSet; });
+            cv.wait(lock, [this]{ return isSet; });
             return std::move(data);
         }
     };
